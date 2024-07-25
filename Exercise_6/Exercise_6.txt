@@ -1,0 +1,137 @@
+sulavkandel@Sulavs-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 11
+Server version: 8.3.0 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| db                 |
+| information_schema |
+| myDB               |
+| mysql              |
+| performance_schema |
+| sql_hr             |
+| sql_inventory      |
+| sql_invoicing      |
+| sql_store          |
+| sys                |
+| WRC                |
++--------------------+
+11 rows in set (0.01 sec)
+
+mysql> USE myDB;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE TABLE Dept (
+    ->     DeptNo INT PRIMARY KEY,
+    ->     Dname VARCHAR(50),
+    ->     Loc VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Emp (
+    ->     EmpNo INT PRIMARY KEY,
+    ->     Ename VARCHAR(50),
+    ->     Job VARCHAR(50),
+    ->     Mgr INT,
+    ->     HireDate DATE,
+    ->     Sal DECIMAL(10, 2),
+    ->     Comm DECIMAL(10, 2),
+    ->     DeptNo INT,
+    ->     FOREIGN KEY (DeptNo) REFERENCES Dept(DeptNo)
+    -> );
+ERROR 1050 (42S01): Table 'emp' already exists
+mysql> DROP TABLE emp;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TABLE Emp (
+    ->     EmpNo INT PRIMARY KEY,
+    ->     Ename VARCHAR(50),
+    ->     Job VARCHAR(50),
+    ->     Mgr INT,
+    ->     HireDate DATE,
+    ->     Sal DECIMAL(10, 2),
+    ->     Comm DECIMAL(10, 2),
+    ->     DeptNo INT,
+    ->     FOREIGN KEY (DeptNo) REFERENCES Dept(DeptNo)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO Dept (DeptNo, Dname, Loc)
+    -> VALUES
+    -> (1, 'HR', 'Kathmandu'),
+    -> (2, 'Finance', 'Pokhara'),
+    -> (3, 'IT', 'Chitwan');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Emp (EmpNo, Ename, Job, Mgr, HireDate, Sal, Comm, DeptNo)
+    -> VALUES
+    -> (1, 'Sulav Kandel', 'Manager', NULL, '1990-01-01', 50000.00, NULL, 1),
+    -> (2, 'Rita Shrestha', 'Developer', 1, '2000-01-01', 45000.00, NULL, 3),
+    -> (3, 'Doma Sherpa', 'Analyst', 1, '2010-01-01', 42000.00, NULL, 3),
+    -> (4, 'Pratik Dhakal', 'Tester', 2, '2015-01-01', 47000.00, NULL, 2),
+    -> (5, 'Sita Rai', 'Support', 2, '2020-01-01', 50000.00, NULL, 1);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE EMP SET Sal = Sal * 1.15 WHERE YEAR(CURDATE()) - YEAR(HireDate) > 30;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM EMP;
++-------+---------------+-----------+------+------------+----------+------+--------+
+| EmpNo | Ename         | Job       | Mgr  | HireDate   | Sal      | Comm | DeptNo |
++-------+---------------+-----------+------+------------+----------+------+--------+
+|     1 | Sulav Kandel  | Manager   | NULL | 1990-01-01 | 57500.00 | NULL |      1 |
+|     2 | Rita Shrestha | Developer |    1 | 2000-01-01 | 45000.00 | NULL |      3 |
+|     3 | Doma Sherpa   | Analyst   |    1 | 2010-01-01 | 42000.00 | NULL |      3 |
+|     4 | Pratik Dhakal | Tester    |    2 | 2015-01-01 | 47000.00 | NULL |      2 |
+|     5 | Sita Rai      | Support   |    2 | 2020-01-01 | 50000.00 | NULL |      1 |
++-------+---------------+-----------+------+------------+----------+------+--------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Mgr,COUNT(*) AS NumberOfEmployees
+    -> FROM EMP
+    -> WHERE Mgr IS NOT NULL
+    -> GROUP BY Mgr
+    -> ORDER BY NumberOfEmployees DESC
+    -> LIMIT 1;
++------+-------------------+
+| Mgr  | NumberOfEmployees |
++------+-------------------+
+|    1 |                 2 |
++------+-------------------+
+1 row in set (0.02 sec)
+
+mysql> CREATE VIEW Emp_Manager AS
+    -> SELECT e1.Ename AS Employee, e2.Ename AS Manager
+    -> FROM Emp e1
+    -> LEFT JOIN Emp e2 ON e1.Mgr = e2.EmpNo;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM Emp;
++-------+---------------+-----------+------+------------+----------+------+--------+
+| EmpNo | Ename         | Job       | Mgr  | HireDate   | Sal      | Comm | DeptNo |
++-------+---------------+-----------+------+------------+----------+------+--------+
+|     1 | Sulav Kandel  | Manager   | NULL | 1990-01-01 | 57500.00 | NULL |      1 |
+|     2 | Rita Shrestha | Developer |    1 | 2000-01-01 | 45000.00 | NULL |      3 |
+|     3 | Doma Sherpa   | Analyst   |    1 | 2010-01-01 | 42000.00 | NULL |      3 |
+|     4 | Pratik Dhakal | Tester    |    2 | 2015-01-01 | 47000.00 | NULL |      2 |
+|     5 | Sita Rai      | Support   |    2 | 2020-01-01 | 50000.00 | NULL |      1 |
++-------+---------------+-----------+------+------------+----------+------+--------+
+5 rows in set (0.01 sec)
