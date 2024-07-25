@@ -1,0 +1,140 @@
+sulavkandel@Sulavs-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 8.3.0 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASEs;
++--------------------+
+| Database           |
++--------------------+
+| db                 |
+| information_schema |
+| myDATABASE         |
+| myDB               |
+| mysql              |
+| performance_schema |
+| sql_hr             |
+| sql_inventory      |
+| sql_invoicing      |
+| sql_store          |
+| sys                |
+| WRC                |
++--------------------+
+12 rows in set (0.00 sec)
+
+mysql> DROP DATABASE myDB;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> CREATE DATABASE myDB;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CREATE TABLE EMPLOYEES (
+    ->     Employee_ID INT PRIMARY KEY,
+    ->     First_Name VARCHAR(20),
+    ->     Last_Name VARCHAR(20),
+    ->     Email VARCHAR(50),
+    ->     Phone_Number VARCHAR(15),
+    ->     Hire_Date DATE,
+    ->     Job_ID VARCHAR(10),
+    ->     Emp_Salary DECIMAL(10, 2),
+    ->     Commission_Pct DECIMAL(5, 2),
+    ->     Manager_ID INT,
+    ->     Department_ID INT
+    -> );
+ERROR 1046 (3D000): No database selected
+mysql> USE myDB;
+Database changed
+mysql> CREATE TABLE EMPLOYEES (
+    ->     Employee_ID INT PRIMARY KEY,
+    ->     First_Name VARCHAR(20),
+    ->     Last_Name VARCHAR(20),
+    ->     Email VARCHAR(50),
+    ->     Phone_Number VARCHAR(15),
+    ->     Hire_Date DATE,
+    ->     Job_ID VARCHAR(10),
+    ->     Emp_Salary DECIMAL(10, 2),
+    ->     Commission_Pct DECIMAL(5, 2),
+    ->     Manager_ID INT,
+    ->     Department_ID INT
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEES (Employee_ID, First_Name, Last_Name, Email, Phone_Number, Hire_Date, Job_ID, Emp_Salary, Commission_Pct, Manager_ID, Department_ID)
+    -> VALUES
+    -> (1, 'Sulav', 'Kandel', 'sulavkandel@gmail.com', '9800000001', '2023-01-15', 'J101', 5000.00, 0.05, 101, 10),
+    -> (2, 'Jane', 'Smith', 'jane.smith@gmail.com', '2345678901', '2023-03-22', 'J102', 4800.00, 0.10, 102, 20),
+    -> (3, 'Rita', 'Shrestha', 'rita.shrestha@gmail.com', '9841234567', '2023-07-11', 'J103', 5200.00, 0.15, 103, 30),
+    -> (4, 'Doma', 'Sherpa', 'doma.sherpa@gmail.com', '9851234568', '2023-05-10', 'J104', 6000.00, 0.20, 104, 60),
+    -> (5, 'Pratik', 'Dhakal', 'pratik.dhakal@gmail.com', '9861234569', '2023-09-01', 'J105', 4700.00, 0.25, 105, 70);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEES;
++-------------+------------+-----------+-------------------------+--------------+------------+--------+------------+----------------+------------+---------------+
+| Employee_ID | First_Name | Last_Name | Email                   | Phone_Number | Hire_Date  | Job_ID | Emp_Salary | Commission_Pct | Manager_ID | Department_ID |
++-------------+------------+-----------+-------------------------+--------------+------------+--------+------------+----------------+------------+---------------+
+|           1 | Sulav     | Kandel    | saange.kandel@gmail.com | 9800000001   | 2023-01-15 | J101   |    5000.00 |           0.05 |        101 |            10 |
+|           2 | Jane       | Smith     | jane.smith@gmail.com    | 2345678901   | 2023-03-22 | J102   |    4800.00 |           0.10 |        102 |            20 |
+|           3 | Rita       | Shrestha  | rita.shrestha@gmail.com | 9841234567   | 2023-07-11 | J103   |    5200.00 |           0.15 |        103 |            30 |
+|           4 | Doma       | Sherpa    | doma.sherpa@gmail.com   | 9851234568   | 2023-05-10 | J104   |    6000.00 |           0.20 |        104 |            60 |
+|           5 | Pratik     | Dhakal    | pratik.dhakal@gmail.com | 9861234569   | 2023-09-01 | J105   |    4700.00 |           0.25 |        105 |            70 |
++-------------+------------+-----------+-------------------------+--------------+------------+--------+------------+----------------+------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Employee_ID, First_Name, Last_Name, Emp_Salary FROM EMPLOYEES;
++-------------+------------+-----------+------------+
+| Employee_ID | First_Name | Last_Name | Emp_Salary |
++-------------+------------+-----------+------------+
+|           1 | Sulav      | Kandel    |    5000.00 |
+|           2 | Jane       | Smith     |    4800.00 |
+|           3 | Rita       | Shrestha  |    5200.00 |
+|           4 | Doma       | Sherpa    |    6000.00 |
+|           5 | Pratik     | Dhakal    |    4700.00 |
++-------------+------------+-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT First_Name, Last_Name FROM EMPLOYEES WHERE Emp_Salary >= 4800;
++------------+-----------+
+| First_Name | Last_Name |
++------------+-----------+
+| Sulav      | Kandel    |
+| Jane       | Smith     |
+| Rita       | Shrestha  |
+| Doma       | Sherpa    |
++------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM EMPLOYEES WHERE Last_Name = 'Austin';
+Empty set (0.00 sec)
+
+mysql> SELECT First_Name, Last_Name FROM EMPLOYEES WHERE Department_ID IN (60, 70, 80);
++------------+-----------+
+| First_Name | Last_Name |
++------------+-----------+
+| Doma       | Sherpa    |
+| Pratik     | Dhakal    |
++------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT Manager_ID FROM EMPLOYEES;
++------------+
+| Manager_ID |
++------------+
+|        101 |
+|        102 |
+|        103 |
+|        104 |
+|        105 |
++------------+
+5 rows in set (0.00 sec)
+
+
