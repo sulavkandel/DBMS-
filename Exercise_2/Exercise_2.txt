@@ -1,0 +1,92 @@
+sulavkandel@Sulavs-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 15
+Server version: 8.3.0 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE myDB;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE myDB;
+Database changed
+mysql> CREATE TABLE Client_Master (
+    ->     ClientNO VARCHAR(10) PRIMARY KEY,
+    ->     Name VARCHAR(50),
+    ->     Address VARCHAR(100),
+    ->     City VARCHAR(50),
+    ->     State VARCHAR(50),
+    ->     Bal_Due DECIMAL(10, 2)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO Client_Master (ClientNO, Name, Address, City, State, Bal_Due)
+    -> VALUES
+    -> ('C101', 'Pratik Shrestha', 'Lakeside', 'Pokhara', 'Gandaki', 4500.00),
+    -> ('C102', 'Sita Rai', 'Baneshwor', 'Kathmandu', 'Bagmati', 5500.00),
+    -> ('C103', 'Gita Magar', 'Hakimchowk', 'Chitwan', 'Narayani', 7000.00),
+    -> ('C104', 'Dinesh Thapa', 'Boudha', 'Kathmandu', 'Bagmati', 3000.00),
+    -> ('C123', 'Kamal Lama', 'Damside', 'Pokhara', 'Gandaki', 6000.00);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Client_Master;
++----------+-----------------+------------+-----------+----------+---------+
+| ClientNO | Name            | Address    | City      | State    | Bal_Due |
++----------+-----------------+------------+-----------+----------+---------+
+| C101     | Pratik Shrestha | Lakeside   | Pokhara   | Gandaki  | 4500.00 |
+| C102     | Sita Rai        | Baneshwor  | Kathmandu | Bagmati  | 5500.00 |
+| C103     | Gita Magar      | Hakimchowk | Chitwan   | Narayani | 7000.00 |
+| C104     | Dinesh Thapa    | Boudha     | Kathmandu | Bagmati  | 3000.00 |
+| C123     | Kamal Lama      | Damside    | Pokhara   | Gandaki  | 6000.00 |
++----------+-----------------+------------+-----------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Name FROM Client_Master WHERE Bal_Due > 5000;
++------------+
+| Name       |
++------------+
+| Sita Rai   |
+| Gita Magar |
+| Kamal Lama |
++------------+
+3 rows in set (0.00 sec)
+
+mysql> UPDATE Client_Master SET Bal_Due = 5100 WHERE ClientNO = 'C123';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM Client_Master;
++----------+-----------------+------------+-----------+----------+---------+
+| ClientNO | Name            | Address    | City      | State    | Bal_Due |
++----------+-----------------+------------+-----------+----------+---------+
+| C101     | Pratik Shrestha | Lakeside   | Pokhara   | Gandaki  | 4500.00 |
+| C102     | Sita Rai        | Baneshwor  | Kathmandu | Bagmati  | 5500.00 |
+| C103     | Gita Magar      | Hakimchowk | Chitwan   | Narayani | 7000.00 |
+| C104     | Dinesh Thapa    | Boudha     | Kathmandu | Bagmati  | 3000.00 |
+| C123     | Kamal Lama      | Damside    | Pokhara   | Gandaki  | 5100.00 |
++----------+-----------------+------------+-----------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> ALTER TABLE Client_Master RENAME TO Client12;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT ClientNO, Name, Address, City, State, Bal_Due AS BALANCE FROM Client12;
++----------+-----------------+------------+-----------+----------+---------+
+| ClientNO | Name            | Address    | City      | State    | BALANCE |
++----------+-----------------+------------+-----------+----------+---------+
+| C101     | Pratik Shrestha | Lakeside   | Pokhara   | Gandaki  | 4500.00 |
+| C102     | Sita Rai        | Baneshwor  | Kathmandu | Bagmati  | 5500.00 |
+| C103     | Gita Magar      | Hakimchowk | Chitwan   | Narayani | 7000.00 |
+| C104     | Dinesh Thapa    | Boudha     | Kathmandu | Bagmati  | 3000.00 |
+| C123     | Kamal Lama      | Damside    | Pokhara   | Gandaki  | 5100.00 |
++----------+-----------------+------------+-----------+----------+---------+
+5 rows in set (0.00 sec)
+
