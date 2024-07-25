@@ -1,0 +1,99 @@
+sulavkandel@Sulavs-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.3.0 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| db                 |
+| information_schema |
+| myDB               |
+| mysql              |
+| performance_schema |
+| sql_hr             |
+| sql_inventory      |
+| sql_invoicing      |
+| sql_store          |
+| sys                |
+| WRC                |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> USE myDB;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE TABLE Sales (
+    ->     Sales_No INT PRIMARY KEY,
+    ->     Sales_Name VARCHAR(50),
+    ->     Branch VARCHAR(50),
+    ->     Sales_Amount DECIMAL(10, 2),
+    ->     DOB DATE
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> INSERT INTO Sales (Sales_No, Sales_Name, Branch, Sales_Amount, DOB)
+    -> VALUES
+    -> (1, 'Ram Bahadur', 'East', 50000.00, '1990-12-21'),
+    -> (2, 'Sita Magar', 'West', 48000.00, '1985-06-15'),
+    -> (3, 'Gopal Thapa', 'East', 52000.00, '1978-12-02'),
+    -> (4, 'Maya Sherpa', 'North', 60000.00, '1995-12-09'),
+    -> (5, 'Bikash Rai', 'South', 47000.00, '1990-09-01');
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT Branch,SUM(Sales_Amount) AS Total_Sales_Amount FROM Sales GROUP BY Branch;
++--------+--------------------+
+| Branch | Total_Sales_Amount |
++--------+--------------------+
+| East   |          102000.00 |
+| West   |           48000.00 |
+| North  |           60000.00 |
+| South  |           47000.00 |
++--------+--------------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT Branch,AVG(Sales_Amount) AS Average_Sales_Amount FROM SALES GROUP BY Branch;
++--------+----------------------+
+| Branch | Average_Sales_Amount |
++--------+----------------------+
+| East   |         51000.000000 |
+| West   |         48000.000000 |
+| North  |         60000.000000 |
+| South  |         47000.000000 |
++--------+----------------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT Sales_Name,DATE_FORMAT(DOB,'%d-%b-%y') AS DOB FROM Sales WHERE MONTH(DOB) = 12;
++-------------+-----------+
+| Sales_Name  | DOB       |
++-------------+-----------+
+| Ram Bahadur | 21-Dec-90 |
+| Gopal Thapa | 02-Dec-78 |
+| Maya Sherpa | 09-Dec-95 |
++-------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT Sales_Name,DATE_FORMAT(DOB,'%d-%b-%y') AS DOB FROM Sales ORDER BY MONTH(DOB);
++-------------+-----------+
+| Sales_Name  | DOB       |
++-------------+-----------+
+| Sita Magar  | 15-Jun-85 |
+| Bikash Rai  | 01-Sep-90 |
+| Ram Bahadur | 21-Dec-90 |
+| Gopal Thapa | 02-Dec-78 |
+| Maya Sherpa | 09-Dec-95 |
++-------------+-----------+
+5 rows in set (0.00 sec)
