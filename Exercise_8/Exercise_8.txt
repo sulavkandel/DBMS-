@@ -1,0 +1,97 @@
+mysql> SELECT e1.Ename 
+    -> FROM Emp e1
+    -> JOIN Emp e2 ON e1.DeptNo = e2.DeptNo AND e1.EmpNo != e2.EmpNo
+    -> JOIN Dept d ON e1.DeptNo = d.DeptNo
+    -> WHERE d.Loc = 'Kathmandu';
++---------------+
+| Ename         |
++---------------+
+| Sulav Kandel  |
+| Sita Rai      |
++---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Ename 
+    -> FROM Emp 
+    -> WHERE Sal = (SELECT MIN(Sal) FROM Emp GROUP BY DeptNo);
+ERROR 1242 (21000): Subquery returns more than 1 row
+mysql> SELECT e.Ename
+    -> FROM Emp e
+    -> JOIN (
+    ->     SELECT DeptNo, MIN(Sal) AS MinSal
+    ->     FROM Emp
+    ->     GROUP BY DeptNo
+    -> ) sub ON e.DeptNo = sub.DeptNo AND e.Sal = sub.MinSal;
++---------------+
+| Ename         |
++---------------+
+| Sulav Kandel  |
+| Doma Sherpa   |
+| Pratik Dhakal |
+| Sita Rai      |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT Dname 
+    -> FROM Dept 
+    -> WHERE DeptNo NOT IN (SELECT DISTINCT DeptNo FROM Emp);
+Empty set (0.01 sec)
+
+mysql> clear
+mysql> system clear
+
+mysql> SELECT e.*, d.* 
+    -> FROM Emp e
+    -> JOIN Dept d ON e.DeptNo = d.DeptNo;
++-------+---------------+-----------+------+------------+----------+------+--------+--------+---------+-----------+
+| EmpNo | Ename         | Job       | Mgr  | HireDate   | Sal      | Comm | DeptNo | DeptNo | Dname   | Loc       |
++-------+---------------+-----------+------+------------+----------+------+--------+--------+---------+-----------+
+|     1 | Sulav Kandel  | Manager   | NULL | 1990-01-01 | 50000.00 | NULL |      1 |      1 | HR      | Kathmandu |
+|     5 | Sita Rai      | Support   |    2 | 2020-01-01 | 50000.00 | NULL |      1 |      1 | HR      | Kathmandu |
+|     4 | Pratik Dhakal | Tester    |    2 | 2015-01-01 | 47000.00 | NULL |      2 |      2 | Finance | Pokhara   |
+|     2 | Rita Shrestha | Developer |    1 | 2000-01-01 | 45000.00 | NULL |      3 |      3 | IT      | Chitwan   |
+|     3 | Doma Sherpa   | Analyst   |    1 | 2010-01-01 | 42000.00 | NULL |      3 |      3 | IT      | Chitwan   |
++-------+---------------+-----------+------+------------+----------+------+--------+--------+---------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT e.Ename, d.Dname 
+    -> FROM Emp e
+    -> LEFT JOIN Dept d ON e.DeptNo = d.DeptNo;
++---------------+---------+
+| Ename         | Dname   |
++---------------+---------+
+| Sulav Kandel  | HR      |
+| Rita Shrestha | IT      |
+| Doma Sherpa   | IT      |
+| Pratik Dhakal | Finance |
+| Sita Rai      | HR      |
++---------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT e.Ename, d.Dname 
+    -> FROM Emp e
+    -> RIGHT JOIN Dept d ON e.DeptNo = d.DeptNo;
++---------------+---------+
+| Ename         | Dname   |
++---------------+---------+
+| Sulav Kandel  | HR      |
+| Sita Rai      | HR      |
+| Pratik Dhakal | Finance |
+| Rita Shrestha | IT      |
+| Doma Sherpa   | IT      |
++---------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * 
+    -> FROM Emp 
+    -> WHERE Sal > (SELECT AVG(Sal) FROM Emp);
++-------+---------------+---------+------+------------+----------+------+--------+
+| EmpNo | Ename         | Job     | Mgr  | HireDate   | Sal      | Comm | DeptNo |
++-------+---------------+---------+------+------------+----------+------+--------+
+|     1 | Sulav Kandel  | Manager | NULL | 1990-01-01 | 50000.00 | NULL |      1 |
+|     4 | Pratik Dhakal | Tester  |    2 | 2015-01-01 | 47000.00 | NULL |      2 |
+|     5 | Sita Rai      | Support |    2 | 2020-01-01 | 50000.00 | NULL |      1 |
++-------+---------------+---------+------+------------+----------+------+--------+
+3 rows in set (0.01 sec)
+
+
