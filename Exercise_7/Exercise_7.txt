@@ -1,0 +1,143 @@
+
+sulavkandel@Sulavs-MacBook-Air ~ % mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 12
+Server version: 8.3.0 Homebrew
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| db                 |
+| information_schema |
+| myDB               |
+| mysql              |
+| performance_schema |
+| sql_hr             |
+| sql_inventory      |
+| sql_invoicing      |
+| sql_store          |
+| sys                |
+| WRC                |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> USE myDB;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> DROP TABLE Emp;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM Emp;
+ERROR 1146 (42S02): Table 'mydb.emp' doesn't exist
+mysql> CREATE TABLE Emp (
+    ->     EmpNo INT PRIMARY KEY,
+    ->     Ename VARCHAR(50),
+    ->     Job VARCHAR(50),
+    ->     Mgr INT,
+    ->     HireDate DATE,
+    ->     Sal DECIMAL(10, 2),
+    ->     Comm DECIMAL(10, 2),
+    ->     DeptNo INT,
+    ->     FOREIGN KEY (DeptNo) REFERENCES Dept(DeptNo)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Dept (DeptNo, Dname, Loc)
+    -> VALUES
+    -> (1, 'HR', 'Kathmandu'),
+    -> (2, 'Finance', 'Pokhara'),
+    -> (3, 'IT', 'Chitwan');
+ERROR 1062 (23000): Duplicate entry '1' for key 'dept.PRIMARY'
+mysql> 
+mysql> INSERT INTO Emp (EmpNo, Ename, Job, Mgr, HireDate, Sal, Comm, DeptNo)
+    -> VALUES
+    -> (1, 'Sulav Kandel', 'Manager', NULL, '1990-01-01', 50000.00, NULL, 1),
+    -> (2, 'Rita Shrestha', 'Developer', 1, '2000-01-01', 45000.00, NULL, 3),
+    -> (3, 'Doma Sherpa', 'Analyst', 1, '2010-01-01', 42000.00, NULL, 3),
+    -> (4, 'Pratik Dhakal', 'Tester', 2, '2015-01-01', 47000.00, NULL, 2),
+    -> (5, 'Sita Rai', 'Support', 2, '2020-01-01', 50000.00, NULL, 1);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT e1.Ename 
+    -> FROM Emp e1
+    -> JOIN Emp e2 ON e1.Mgr = e2.EmpNo
+    -> WHERE e1.Sal > e2.Sal;
++---------------+
+| Ename         |
++---------------+
+| Pratik Dhakal |
+| Sita Rai      |
++---------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT Ename 
+    -> FROM Emp 
+    -> WHERE (DeptNo, Sal) IN (
+    ->     SELECT DeptNo, MAX(Sal) 
+    ->     FROM Emp 
+    ->     GROUP BY DeptNo
+    -> );
++---------------+
+| Ename         |
++---------------+
+| Sulav Kandel  |
+| Rita Shrestha |
+| Pratik Dhakal |
+| Sita Rai      |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT e1.Ename 
+    -> FROM Emp e1
+    -> JOIN Emp e2 ON e1.DeptNo = e2.DeptNo AND e1.EmpNo != e2.EmpNo
+    -> JOIN Dept d ON e1.DeptNo = d.DeptNo
+    -> WHERE d.Loc = 'Kathmandu';
++---------------+
+| Ename         |
++---------------+
+| Sulav Kandel  |
+| Sita Rai      |
++---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Ename 
+    -> FROM Emp 
+    -> WHERE Sal = (SELECT MIN(Sal) FROM Emp GROUP BY DeptNo);
+ERROR 1242 (21000): Subquery returns more than 1 row
+mysql> SELECT e.Ename
+    -> FROM Emp e
+    -> JOIN (
+    ->     SELECT DeptNo, MIN(Sal) AS MinSal
+    ->     FROM Emp
+    ->     GROUP BY DeptNo
+    -> ) sub ON e.DeptNo = sub.DeptNo AND e.Sal = sub.MinSal;
++---------------+
+| Ename         |
++---------------+
+| SUlav Kandel  |
+| Doma Sherpa   |
+| Pratik Dhakal |
+| Sita Rai      |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT Dname 
+    -> FROM Dept 
+    -> WHERE DeptNo NOT IN (SELECT DISTINCT DeptNo FROM Emp);
+Empty set (0.01 sec)
